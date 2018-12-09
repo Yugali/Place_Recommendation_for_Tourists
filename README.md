@@ -1,0 +1,2 @@
+# Place_Recommendation_for_Tourists
+Recommendation Systems are mainly used to predict the output based on the user ratings and inputs. In a decade recommendation system has gained popularity for a variety of applications. Recommendation system compares the data collected from users and create a list of items recommended to the user. Place Recommendation system allows user to enter the rating of the city/ tourist destination they visited and then depending on their interest a similar place will be recommended.
