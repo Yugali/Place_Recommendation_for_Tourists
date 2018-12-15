@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
+<body>
+<div class="jumbotron" style="background-color:#4682B4 !important;">
+    <h1 class="text-center">Welcome to Place Recommender</h1>
+    <p class="text-center">Please add cities and ratings</p>
+</div>
+<div class="container">
+    <label>Please Enter atleast 5 cities and their ratings</label>
+    <form action="/rating" method="post">
+        <input type="hidden" value="default" name="username">
+    <table id="myTable" class=" table order-list">
+    <thead>
+        <tr>
+            <td>Name of City</td>
+            <td>Rating (1-5)</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="col-sm-4">
+                <select class="form-control" name="cityname" id="sel1">
+                    <option value="1">Arizona</option>
+                    <option value="2">Atlanta</option>
+                    <option value="3">Austin</option>
+                    <option value="4">Boston</option>
+                    <option value="5">Charleston</option>
+                    <option value="6">Chicago</option>
+                    <option value="7">Colorado</option>
+                    <option value="8">Florida</option>
+                    <option value="9">Honolulu- Oahu</option>
+                    <option value="10">Islands of Hawaii</option>
+                    <option value="11">Las Vegas</option>
+                    <option value="12">Los Angeles</option>
+                    <option value="13">Maui</option>
+                    <option value="14">Miami</option>
+                    <option value="15">Michigan</option>
+                    <option value="16">New Jersey</option>
+                    <option value="17">New Orleans</option>
+                    <option value="18">New York</option>
+                    <option value="19">North Carolina</option>
+                    <option value="20">Oregon</option>
+                    <option value="21">Orlando</option>
+                    <option value="22">Philadelphia</option>
+                    <option value="23">Phoenix</option>
+                    <option value="24">San Diego</option>
+                    <option value="25">San Francisco</option>
+                    <option value="26">Seattle</option>
+                    <option value="27">South Carolina</option>
+                    <option value="28">Virginia</option>
+                    <option value="29">Washington D.C.</option>
+                    <option value="30">Yosemite</option>
+
+                </select>
+            </td>
+            <td class="col-sm-4">
+                <input type="number" name="rating" class="form-control"/>
+            </td>
+            <td class="col-sm-2"><a class="deleteRow"></a>
+
+            </td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" style="text-align: left;">
+                <input type="button" class="btn btn-lg btn-block " id="addrow" value="Click here to add a city" />
+            </td>
+        </tr>
+        <tr>
+        </tr>
+    </tfoot>
+    </table>
+        <input type="submit" class="btn" value="Click here to submit ratings" id="submit"/>
+        <br><br><br><br>
+    </form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    var counter = 0;
+
+    $("#addrow").on("click", function () {
+        var newRow = $("<tr>");
+        var cols = "";
+
+        cols += '<td><select class="form-control" name="cityname" id="sel1"><option value="1">Arizona</option><option value="2">Atlanta</option><option value="3">Austin</option><option value="4">Boston</option><option value="5">Charleston</option><option value="6">Chicago</option><option value="7">Colorado</option><option value="8">Florida</option><option value="9">Honolulu- Oahu</option><option value="10">Islands of Hawaii</option><option value="11">Las Vegas</option><option value="12">Los Angeles</option><option value="13">Maui</option><option value="14">Miami</option><option value="15">Michigan</option><option value="16">New Jersey</option><option value="17">New Orleans</option><option value="18">New York</option><option value="19">North Carolina</option><option value="20">Oregon</option><option value="21">Orlando</option><option value="22">Philadelphia</option><option value="23">Phoenix</option><option value="24">San Diego</option><option value="25">San Francisco</option><option value="26">Seattle</option><option value="27">South Carolina</option><option value="28">Virginia</option><option value="29">Washington D.C.</option><option value="30">Yosemite</option></select></td>';
+
+        cols += '<td><input type="number" class="form-control" name="rating"/></td>';
+
+        cols += '<td><input type="button" class="ibtnDel btn btn-md btn-danger "  value="Delete"></td>';
+        newRow.append(cols);
+        $("table.order-list").append(newRow);
+        counter++;
+    });
+
+    $("#submit").on("click", function(){
+
+        $.urlParam = function(name)
+        {
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            return results[1] || 0;
+        }
+        $('[name=username]').val($.urlParam('name'));
+        alert($.urlParam('data'));
+        alert(JSON.stringify($('form').serializeArray()));
+
+    });
+
+    $("table.order-list").on("click", ".ibtnDel", function (event) {
+        $(this).closest("tr").remove();
+        counter -= 1
+    });
+
+
+});
+
+
+
+function calculateRow(row) {
+    var price = +row.find('input[name^="price"]').val();
+
+}
+
+function calculateGrandTotal() {
+    var grandTotal = 0;
+    $("table.order-list").find('input[name^="price"]').each(function () {
+        grandTotal += +$(this).val();
+    });
+    $("#grandtotal").text(grandTotal.toFixed(2));
+}
+</script>
+<div class="container">
+    <label>Below is the data you have already filled</label>
+    <form action="/recommend" method="post">
+    <table  class="table">
+    <thead>
+        <tr>
+            <td>Name of City</td>
+            <td>Rating (1-5)</td>
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in session['allData'] %}
+        <tr>
+            {% for d in row %}
+            <td class="col-sm-4" name="cityname">{{ d }}
+            </td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+        {% if session['length'] >= 5 %}
+            <input type="submit" class="btn" value="Find New City" >
+            {% else %}
+                <label>Enter 5 ratings to proceed</label>
+        {% endif %}
+        <br><br><br>
+    </form>
+</div>
+{% if session['recommendFlag'] == 1 %}
+    <div class="container">
+        <h2>Based on your ratings and other similar user ratings we recommend you to visit {{session['recommendCity']}}.</h2>
+    </div>
+{% endif %}
+</body>
+</html>
